@@ -10,19 +10,22 @@ public class ThreadPoolExecutorDemo {
     public static void main(String[] args) throws InterruptedException {
         ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
                 1, 5, 1L, TimeUnit.SECONDS,
-                new LinkedBlockingQueue<>(5), Executors.defaultThreadFactory(), new ThreadPoolExecutor.AbortPolicy());
+                new LinkedBlockingQueue<>(5),
+                Executors.defaultThreadFactory(),
+                new ThreadPoolExecutor.AbortPolicy());
         threadPoolExecutor.allowCoreThreadTimeOut(true);
 
         printThreadPoolStatus(threadPoolExecutor);
         for (int i = 1; i <= 10; i++) {
-            Thread.sleep(270);
-            System.out.println("添加任务"+i);
             threadPoolExecutor.execute(new TaskDemo());
-
         }
 
     }
 
+    /**
+     * 监控当前线程池
+     * @param threadPool
+     */
     public static void printThreadPoolStatus(ThreadPoolExecutor threadPool) {
         ScheduledExecutorService scheduledExecutorService = new ScheduledThreadPoolExecutor(1);
         scheduledExecutorService.scheduleAtFixedRate(() -> {
@@ -32,7 +35,7 @@ public class ThreadPoolExecutorDemo {
             System.out.println("Number of Tasks "+ threadPool.getCompletedTaskCount());
             System.out.println("Number of Tasks in Queue:"+ threadPool.getQueue().size());
             System.out.println("=========================");
-        }, 0, 800, TimeUnit.MILLISECONDS);
+        }, 0, 1, TimeUnit.SECONDS);
     }
     
 }
@@ -41,10 +44,10 @@ class TaskDemo implements Runnable{
     @Override
     public void run() {
         try {
-            Thread.sleep(900);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println(Thread.currentThread().getName()+"\t =====执行");
+        System.out.println(Thread.currentThread().getName()+"\t =====执行任务");
     }
 }
